@@ -10,28 +10,25 @@ interface Task {
 }
 
 const App: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]); // Define tasks as an array of Task objects
-  const [newTask, setNewTask] = useState<string>(''); // Define newTask as a string
-  const [taskVisibility, setTaskVisibility] = useState<boolean>(false); // Define taskVisibility as a boolean
+  const [tasks, setTasks] = useState<Task[]>([]); 
+  const [newTask, setNewTask] = useState<string>(''); 
+  const [taskVisibility, setTaskVisibility] = useState<boolean>(false);
 
-  // Fetch tasks on component mount
   useEffect(() => {
     axios.get('http://localhost:5000/api/tasks')
       .then((response) => {
-        setTasks(response.data);  // Update state with tasks data from the backend
+        setTasks(response.data);
       })
       .catch((error) => {
         console.error('There was an error fetching the tasks!', error);
       });
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+  }, []); 
 
-  // Toggle tasks visibility
   const handleTasks = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setTaskVisibility(!taskVisibility);
   };
 
-  // Handle adding a new task
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newTask.trim() === '') {
@@ -43,10 +40,10 @@ const App: React.FC = () => {
       return;
     }
 
-    const task: Task = { task: newTask, id: Date.now() }; // Simulating task ID for now
+    const task: Task = { task: newTask, id: Date.now() }; 
     axios.post('http://localhost:5000/api/tasks', task)
       .then((response) => {
-        setTasks([...tasks, response.data]); // Add new task to the list
+        setTasks([...tasks, response.data]);
         setNewTask('');
         toast.success("Task added successfully!");
       })
@@ -55,11 +52,10 @@ const App: React.FC = () => {
       });
   };
 
-  // Handle deleting a task
   const handleDelete = (id: number) => {
     axios.delete(`http://localhost:5000/api/tasks/${id}`)
       .then(() => {
-        setTasks(tasks.filter((task) => task.id !== id)); // Remove the deleted task from the list
+        setTasks(tasks.filter((task) => task.id !== id)); 
         toast.success("Task deleted successfully!");
       })
       .catch((error) => {
@@ -71,12 +67,11 @@ const App: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-10">
       <h1 className="text-4xl font-bold text-center mb-8 text-blue-600">To-Do List</h1>
 
-      {/* Form to add a new task */}
       <form onSubmit={handleSubmit} className="w-96 bg-white p-6 rounded-lg shadow-lg mb-6">
         <input
           type="text"
           value={newTask}
-          onChange={(e) => setNewTask(e.target.value)} // Update state when user types
+          onChange={(e) => setNewTask(e.target.value)}
           placeholder="Add a new task"
           className="w-full p-3 border-2 border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
@@ -88,7 +83,6 @@ const App: React.FC = () => {
         </button>
       </form>
 
-      {/* Button to toggle visibility of tasks */}
       <button
         onClick={handleTasks}
         className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 mb-6 transition-colors"
@@ -96,7 +90,6 @@ const App: React.FC = () => {
         {taskVisibility ? 'Hide Tasks' : 'Show Tasks'}
       </button>
 
-      {/* Render tasks or display a message */}
       <ul className="w-96 bg-white p-6 rounded-lg shadow-lg">
         {taskVisibility ? (
           tasks.map((task) => (
@@ -115,7 +108,6 @@ const App: React.FC = () => {
         )}
       </ul>
 
-      {/* Toast notifications container */}
       <ToastContainer />
     </div>
   );
